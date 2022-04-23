@@ -22,9 +22,13 @@ services:
   redis-sentinel:
     build: 
       context: ./redis-sentinel
-    container_name: sentinel
     ports:
-      - "26379:26379"
+      - "26379-26382:26379"
     links:
       - redis-master
+
+
+      #  docker-compose up  --slace redis-slave=3 --scale redis-sentine=2
+      # redis-cli -p 26379
+      # sentinel get-master-addr-by-name mymaster
  
