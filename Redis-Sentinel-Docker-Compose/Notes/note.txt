@@ -1,0 +1,44 @@
+
+sentinel monitor mymaster 127.0.0.1 6379 2
+- mymaster isminde master olan resi için  bir monitorin işlemi yapılacağını belirtir.
+-quorum : master erişilemediği zaman anlaşma sağlanacak sentinels sayısıdır. master'ı failing olarak işaretleyecek ve failover sürecini başlatacak. 
+                : quorum değeri yanlızca failure tespit etmek için kullanılır. sentinelslerden bir tanesi leader olarak seçilir ve süreci başlatır. sentinel'lerin  çoğunluğunun oyu ile.
+Örn:  5 tane sentinel process var.   quorum değeri 2'ye set edildi.
+   - 2 tane sentinel aynı aynda master'ın erişilemez olduğuna karar verirse. 2 tanesinden bir tanesi failover sürecini başlatır.
+   - en az 3 tane sentinel  tesbit ederse seçim yapılır ve bir tanesi  failover süreceini başlatır.
+   - eğer 2'den az olursa sentinel bir failover süreci başlatmaz
+   --------------------------------------------
+   sentinel down-after-milliseconds mymaster 60000
+   -  down-after-milliseconds : millisaniye cinisinden bir instance ne kadar süre erişilemez olacağını belirtir. sentinel'ler  bu saniyeden sonra ilgili instance'sın down olduğunu düşünmeye başlayacaktır.
+   --------------------------------------------
+   sentinel parallel-syncs mymaster 1
+-failover olduktan sonra yeni master kullanmak için configure edilecek replica sayısı.
+-değerin düşük olmask failover sürecinin tamamlanmasını  yükseltecektir. master seçildikten sonra slave'lar ile sync olmak zorunda. 1 değerine  seçersek  master aynı zamanda  1 teneye erişilemez olduğunu emin oluruz.
+-----------------
+sentinel failover-timeout mymaster 18000
+- oylamadan sonra bir sentinel bir replica  için failover başlattığında, tekrar aynı replice  için failover başlatmak için geçen süre
+
+
+
+
+
+sentinel monitor MasterName RedisMasterServerIP RedisMasterPort Quorum
+
+sentinel down-after-milliseconds MasterName  DownTimeout
+
+sentinel failover-timeout MasterName  FailoverTimeout
+
+sentinel parallel-syncs MasterName  ConcurrentServerSync
+
+where
+
+Line 1 – tells the master to be monitored. The quorum is used to detect failures. When the master is not reachable, the number of sentinels in the quorum should agree about it.
+
+Line 2 – master will be considered as down when it’s not reachable for the Sentinel for the time specified in milliseconds.
+
+Line 3 – The timeout in milliseconds indicates the time that Sentinel will wait after a failover before starting a new failover.
+
+Line 4 – The number of slaves that can synch with the new master at the same time after failover.
+
+
+
