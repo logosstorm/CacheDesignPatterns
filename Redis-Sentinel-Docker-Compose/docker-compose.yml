@@ -1,31 +1,101 @@
-version: '3.7'
+
+version: '2'
+
+networks:
+  app-tier:
+    driver: bridge
+
 services:
-  redis-master:
-    image: redis:6
-    container_name:  master
-    # volumes:
-    #   - "./.data:/data"
+  redis:
+    image: 'bitnami/redis:latest'
+    environment:
+      - REDIS_REPLICATION_MODE=master
+      - REDIS_PASSWORD=str0ng_passw0rd
+    networks:
+      - app-tier
     ports:
-      - "6379:6379"
- 
+      - '6379:6379'
   redis-slave:
-    image: redis:6
-    command: redis-server --slaveof redis-master 6379
-    links:
-      - redis-master
-    # volumes:
-    #   - "./.data:/data"
+    image: 'bitnami/redis:latest'
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis
+      - REDIS_MASTER_PASSWORD=str0ng_passw0rd
+      - REDIS_PASSWORD=str0ng_passw0rd
     ports:
-      - "6380-6385:6379"
-     
-  # Instance 1
+      - '6380-6385:6379'
+    depends_on:
+      - redis
+    networks:
+      - app-tier
   redis-sentinel:
-    build: 
-      context: ./redis-sentinel
+    image: 'bitnami/redis-sentinel:latest'
+    environment:
+      - REDIS_MASTER_PASSWORD=str0ng_passw0rd
+      - REDIS_MASTER_HOST=127.0.0.1
+    depends_on:
+      - redis
+      - redis-slave
     ports:
-      - "26379-26382:26379"
-    links:
-      - redis-master
+      - '26379-26381:26379'
+    networks:
+      - app-tier
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# version: '3.7'
+# services:
+#   redis-master:
+#     image: redis:6
+#     container_name:  master
+#     # volumes:
+#     #   - "./.data:/data"
+#     ports:
+#       - "6379:6379"
+ 
+#   redis-slave:
+#     image: redis:6
+#     command: redis-server --slaveof redis-master 6379
+#     links:
+#       - redis-master
+#     # volumes:
+#     #   - "./.data:/data"
+#     ports:
+#       - "6380-6385:6379"
+     
+#   # Instance 1
+#   redis-sentinel:
+#     build: 
+#       context: ./redis-sentinel
+#     ports:
+#       - "26379-26382:26379"
+#     links:
+#       - redis-master
 
 
       #  docker-compose up  --slace redis-slave=3 --scale redis-sentine=2
