@@ -23,7 +23,7 @@ services:
       - REDIS_MASTER_PASSWORD=str0ng_passw0rd
       - REDIS_PASSWORD=str0ng_passw0rd
     ports:
-      - '6380-6385:6379'
+      - '6380-6399:6379'
     depends_on:
       - redis
     networks:
@@ -37,35 +37,9 @@ services:
       - redis
       - redis-slave
     ports:
-      - '26379-26381:26379'
+      - '26379-26399:26379'
     networks:
       - app-tier
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # version: '3.7'
